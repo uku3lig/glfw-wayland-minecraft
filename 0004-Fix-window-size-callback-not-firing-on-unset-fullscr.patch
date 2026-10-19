@@ -1,7 +1,7 @@
-From 8ffda02989ad2c684e9be06218d5831841743910 Mon Sep 17 00:00:00 2001
+From b168c8f60b32fc3b9a9522f9d524fef2f06666bf Mon Sep 17 00:00:00 2001
 From: keke142 <jdkeke142@gmail.com>
 Date: Fri, 17 Apr 2026 16:03:33 +0200
-Subject: [PATCH 5/8] Fix window size callback not firing on unset fullscreen
+Subject: [PATCH 4/8] Fix window size callback not firing on unset fullscreen
 
 When exiting fullscreen via _glfwSetWindowSizeWayland, the window
 surface is resized but the size callback is never fired. The client
@@ -17,10 +17,10 @@ Based on BoyOrigin/glfw-wayland patch 0004.
  1 file changed, 2 insertions(+)
 
 diff --git a/src/wl_window.c b/src/wl_window.c
-index e0517f0d..6a0b9f0e 100644
+index 69360ba8..a2d0397c 100644
 --- a/src/wl_window.c
 +++ b/src/wl_window.c
-@@ -2624,6 +2624,8 @@ void _glfwSetWindowSizeWayland(_GLFWwindow* window, int width, int height)
+@@ -2576,6 +2576,8 @@ void _glfwSetWindowSizeWayland(_GLFWwindow* window, int width, int height)
              libdecor_state_free(frameState);
          }
  

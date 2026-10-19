@@ -1,7 +1,7 @@
-From cad25f354e5c224e819f2133630267914ade2f67 Mon Sep 17 00:00:00 2001
+From dd0a1b1f9be437d3c939e9fb70ad044f02c93d1a Mon Sep 17 00:00:00 2001
 From: keke142 <jdkeke142@gmail.com>
 Date: Fri, 17 Apr 2026 16:01:42 +0200
-Subject: [PATCH 3/8] Key modifiers fix
+Subject: [PATCH 2/8] Key modifiers fix
 
 Without this, pressing Ctrl+A in a text field (e.g. Minecraft chat)
 inserts a literal 'a' character in addition to triggering the select-all
@@ -11,10 +11,10 @@ shortcut. Only call _glfwInputChar when no modifier keys are held.
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/src/wl_window.c b/src/wl_window.c
-index 2c9f55f8..74c68a36 100644
+index 66013207..d3a18117 100644
 --- a/src/wl_window.c
 +++ b/src/wl_window.c
-@@ -1371,7 +1371,9 @@ static void inputText(_GLFWwindow* window, uint32_t scancode)
+@@ -1370,7 +1370,9 @@ static void inputText(_GLFWwindow* window, uint32_t scancode)
          {
              const int mods = _glfw.wl.xkb.modifiers;
              const int plain = !(mods & (GLFW_MOD_CONTROL | GLFW_MOD_ALT));

@@ -1,0 +1,29 @@
+From 96b53faf2e7bec3d365f22af89839ce16545c86e Mon Sep 17 00:00:00 2001
+From: FayBoy <ahmadyasinfikri@gmail.com>
+Date: Thu, 7 Mar 2024 03:05:59 +0700
+Subject: [PATCH 8/8] Remove window icon error
+
+This will always trigger as waywall (rightfully) does not implement the
+protocol
+---
+ src/wl_window.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/wl_window.c b/src/wl_window.c
+index e8fada5a..72682efb 100644
+--- a/src/wl_window.c
++++ b/src/wl_window.c
+@@ -2591,8 +2591,8 @@ void _glfwSetWindowTitleWayland(_GLFWwindow* window, const char* title)
+ void _glfwSetWindowIconWayland(_GLFWwindow* window,
+                                int count, const GLFWimage* images)
+ {
+-    _glfwInputError(GLFW_FEATURE_UNAVAILABLE,
+-                    "Wayland: The platform does not support setting the window icon");
++    fprintf(stderr,
++            "[GLFW] Wayland: The platform does not support setting the window icon\n");
+ }
+ 
+ void _glfwGetWindowPosWayland(_GLFWwindow* window, int* xpos, int* ypos)
+-- 
+2.55.0
+

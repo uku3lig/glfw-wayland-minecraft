@@ -1,7 +1,7 @@
-From 3c6dd270b624518a98363b0ee7136fa7202e0a81 Mon Sep 17 00:00:00 2001
+From 3739f84c8d1d3af54a2271500ee147b1fd5c57f0 Mon Sep 17 00:00:00 2001
 From: build <build@ci>
 Date: Tue, 21 Apr 2026 00:49:48 +0200
-Subject: [PATCH 8/8] Add GLFW_USE_LEGACY_CURSOR_WARP env var to opt out of
+Subject: [PATCH 7/8] Add GLFW_USE_LEGACY_CURSOR_WARP env var to opt out of
  pointer_warp_v1
 
 pointer_warp_v1 has known issues on some compositors, notably Hyprland,
@@ -14,10 +14,10 @@ GLFW_USE_LEGACY_CURSOR_WARP=1 env var.
  1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/src/wl_window.c b/src/wl_window.c
-index a9fa94e7..59af7b15 100644
+index 52ccb51c..e8fada5a 100644
 --- a/src/wl_window.c
 +++ b/src/wl_window.c
-@@ -3085,8 +3085,20 @@ void _glfwGetCursorPosWayland(_GLFWwindow* window, double* xpos, double* ypos)
+@@ -3037,8 +3037,20 @@ void _glfwGetCursorPosWayland(_GLFWwindow* window, double* xpos, double* ypos)
  
  void _glfwSetCursorPosWayland(_GLFWwindow* window, double x, double y)
  {

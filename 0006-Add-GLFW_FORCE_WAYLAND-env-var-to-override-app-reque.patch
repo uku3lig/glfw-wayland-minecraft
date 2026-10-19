@@ -1,7 +1,7 @@
-From 8ca291a4a8819a8b1a41e91cf267a95c324c8b1e Mon Sep 17 00:00:00 2001
+From 9bb78978cade590a09a71fa92596916dda9ee48e Mon Sep 17 00:00:00 2001
 From: build <build@ci>
 Date: Mon, 20 Apr 2026 21:03:36 +0200
-Subject: [PATCH 7/8] Add GLFW_FORCE_WAYLAND env var to override app-requested
+Subject: [PATCH 6/8] Add GLFW_FORCE_WAYLAND env var to override app-requested
  X11
 
 Minecraft 26.1+ calls glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11)

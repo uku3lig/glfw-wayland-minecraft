@@ -1,7 +1,7 @@
-From f01fe9f002d829c64af50d71bd8e5909343ec6bb Mon Sep 17 00:00:00 2001
+From 7d13ae2af76b16602b490cc51a5e0ea2f2a6bd4d Mon Sep 17 00:00:00 2001
 From: keke142 <jdkeke142@gmail.com>
 Date: Fri, 17 Apr 2026 16:04:59 +0200
-Subject: [PATCH 6/8] Implement cursor-shape-v1 protocol
+Subject: [PATCH 5/8] Implement cursor-shape-v1 protocol
 
 Let the compositor render standard cursors instead of the client
 uploading cursor pixmaps. This ensures the cursor theme, size and
@@ -1494,33 +1494,33 @@ index 00000000..85529bdf
 +  </interface>
 +</protocol>
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index ac3634e8..d0bc3d5e 100644
+index 35e0a70f..4b05c898 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -107,6 +107,8 @@ if (GLFW_BUILD_WAYLAND)
+@@ -106,6 +106,8 @@ if (GLFW_BUILD_WAYLAND)
+     generate_wayland_protocol("fractional-scale-v1.xml")
      generate_wayland_protocol("xdg-activation-v1.xml")
      generate_wayland_protocol("xdg-decoration-unstable-v1.xml")
-     generate_wayland_protocol("xdg-toplevel-icon-v1.xml")
 +    generate_wayland_protocol("tablet-v2.xml")
 +    generate_wayland_protocol("cursor-shape-v1.xml")
  endif()
  
  if (WIN32 AND GLFW_BUILD_SHARED_LIBRARY)
 diff --git a/src/wl_init.c b/src/wl_init.c
-index 9c714dbd..ebd95a62 100644
+index a3a24c97..759eeb6e 100644
 --- a/src/wl_init.c
 +++ b/src/wl_init.c
-@@ -51,6 +51,8 @@
+@@ -50,6 +50,8 @@
+ #include "xdg-activation-v1-client-protocol.h"
  #include "idle-inhibit-unstable-v1-client-protocol.h"
  #include "pointer-warp-v1-client-protocol.h"
- #include "xdg-toplevel-icon-v1-client-protocol.h"
 +#include "tablet-v2-client-protocol.h"
 +#include "cursor-shape-v1-client-protocol.h"
  
  // NOTE: Versions of wayland-scanner prior to 1.17.91 named every global array of
  //       wl_interface pointers 'types', making it impossible to combine several unmodified
-@@ -101,6 +103,14 @@
- #include "xdg-toplevel-icon-v1-client-protocol-code.h"
+@@ -96,6 +98,14 @@
+ #include "pointer-warp-v1-client-protocol-code.h"
  #undef types
  
 +#define types _glfw_tablet_types
@@ -1534,8 +1534,8 @@ index 9c714dbd..ebd95a62 100644
  static void wmBaseHandlePing(void* userData,
                               struct xdg_wm_base* wmBase,
                               uint32_t serial)
-@@ -225,6 +235,13 @@ static void registryHandleGlobal(void* userData,
-                              &xdg_toplevel_icon_manager_v1_interface,
+@@ -213,6 +223,13 @@ static void registryHandleGlobal(void* userData,
+                              &wp_pointer_warp_v1_interface,
                               1);
      }
 +    else if (strcmp(interface, wp_cursor_shape_manager_v1_interface.name) == 0)
@@ -1548,10 +1548,10 @@ index 9c714dbd..ebd95a62 100644
  }
  
  static void registryHandleGlobalRemove(void* userData,
-@@ -1014,6 +1031,10 @@ void _glfwTerminateWayland(void)
+@@ -1000,6 +1017,10 @@ void _glfwTerminateWayland(void)
+         xdg_activation_v1_destroy(_glfw.wl.activationManager);
+     if (_glfw.wl.fractionalScaleManager)
          wp_fractional_scale_manager_v1_destroy(_glfw.wl.fractionalScaleManager);
-     if (_glfw.wl.toplevelIconManager)
-         xdg_toplevel_icon_manager_v1_destroy(_glfw.wl.toplevelIconManager);
 +    if (_glfw.wl.cursorShapeManager)
 +        wp_cursor_shape_manager_v1_destroy(_glfw.wl.cursorShapeManager);
 +    if (_glfw.wl.cursorShapeDevice)
@@ -1560,7 +1560,7 @@ index 9c714dbd..ebd95a62 100644
          wl_registry_destroy(_glfw.wl.registry);
      if (_glfw.wl.display)
 diff --git a/src/wl_platform.h b/src/wl_platform.h
-index 31321286..db073529 100644
+index e8e1f68b..98d29e30 100644
 --- a/src/wl_platform.h
 +++ b/src/wl_platform.h
 @@ -143,6 +143,8 @@ struct wl_output;
@@ -1572,16 +1572,16 @@ index 31321286..db073529 100644
  
  #define GLFW_WAYLAND_WINDOW_STATE         _GLFWwindowWayland  wl;
  #define GLFW_WAYLAND_LIBRARY_WINDOW_STATE _GLFWlibraryWayland wl;
-@@ -465,6 +467,8 @@ typedef struct _GLFWlibraryWayland
+@@ -464,6 +466,8 @@ typedef struct _GLFWlibraryWayland
+     struct xdg_activation_v1*               activationManager;
      struct wp_fractional_scale_manager_v1*  fractionalScaleManager;
      struct wp_pointer_warp_v1*  pointerWarp;
-     struct xdg_toplevel_icon_manager_v1*    toplevelIconManager;
 +    struct wp_cursor_shape_manager_v1*  cursorShapeManager;
 +    struct wp_cursor_shape_device_v1*   cursorShapeDevice;
  
      _GLFWofferWayland*          offers;
      unsigned int                offerCount;
-@@ -655,6 +659,7 @@ typedef struct _GLFWcursorWayland
+@@ -654,6 +658,7 @@ typedef struct _GLFWcursorWayland
      int                         width, height;
      int                         xhot, yhot;
      int                         currentImage;
@@ -1590,18 +1590,18 @@ index 31321286..db073529 100644
  
  GLFWbool _glfwConnectWayland(int platformID, _GLFWplatform* platform);
 diff --git a/src/wl_window.c b/src/wl_window.c
-index 6a0b9f0e..a9fa94e7 100644
+index a2d0397c..52ccb51c 100644
 --- a/src/wl_window.c
 +++ b/src/wl_window.c
-@@ -55,6 +55,7 @@
+@@ -54,6 +54,7 @@
+ #include "idle-inhibit-unstable-v1-client-protocol.h"
  #include "fractional-scale-v1-client-protocol.h"
  #include "pointer-warp-v1-client-protocol.h"
- #include "xdg-toplevel-icon-v1-client-protocol.h"
 +#include "cursor-shape-v1-client-protocol.h"
  
  #define GLFW_BORDER_SIZE    4
  #define GLFW_CAPTION_HEIGHT 24
-@@ -1247,9 +1248,67 @@ static GLFWbool createNativeSurface(_GLFWwindow* window,
+@@ -1246,9 +1247,67 @@ static GLFWbool createNativeSurface(_GLFWwindow* window,
      return GLFW_TRUE;
  }
  
@@ -1669,7 +1669,7 @@ index 6a0b9f0e..a9fa94e7 100644
      struct itimerspec timer = {0};
      struct wl_cursor* wlCursor = cursorWayland->cursor;
      struct wl_cursor_image* image;
-@@ -2081,6 +2140,10 @@ static void seatHandleCapabilities(void* userData,
+@@ -2080,6 +2139,10 @@ static void seatHandleCapabilities(void* userData,
      {
          _glfw.wl.pointer = wl_seat_get_pointer(seat);
          wl_pointer_add_listener(_glfw.wl.pointer, &pointerListener, NULL);
@@ -1680,7 +1680,7 @@ index 6a0b9f0e..a9fa94e7 100644
      }
      else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && _glfw.wl.pointer)
      {
-@@ -3132,6 +3195,8 @@ GLFWbool _glfwCreateCursorWayland(_GLFWcursor* cursor,
+@@ -3084,6 +3147,8 @@ GLFWbool _glfwCreateCursorWayland(_GLFWcursor* cursor,
  
  GLFWbool _glfwCreateStandardCursorWayland(_GLFWcursor* cursor, int shape)
  {
@@ -1689,7 +1689,7 @@ index 6a0b9f0e..a9fa94e7 100644
      const char* name = NULL;
  
      // Try the XDG names first
-@@ -3452,7 +3517,8 @@ void _glfwSetCursorWayland(_GLFWwindow* window, _GLFWcursor* cursor)
+@@ -3404,7 +3469,8 @@ void _glfwSetCursorWayland(_GLFWwindow* window, _GLFWcursor* cursor)
                  NULL,
                  0, 0,
                  0, 0,

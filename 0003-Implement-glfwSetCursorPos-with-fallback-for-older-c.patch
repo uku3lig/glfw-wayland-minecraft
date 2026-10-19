@@ -1,7 +1,7 @@
-From 0000136f38fa4835463519cb0d1d84e37c8e939d Mon Sep 17 00:00:00 2001
+From 58947b16ec897fb3b4ebe5bf35312a8dcc5a91e0 Mon Sep 17 00:00:00 2001
 From: keke142 <jdkeke142@gmail.com>
 Date: Fri, 17 Apr 2026 16:03:11 +0200
-Subject: [PATCH 4/8] Implement glfwSetCursorPos with fallback for older
+Subject: [PATCH 3/8] Implement glfwSetCursorPos with fallback for older
  compositors
 
 The LWJGL-CI fork already implements glfwSetCursorPos via the
@@ -20,7 +20,7 @@ Based on BoyOrigin/glfw-wayland patch 0003.
  2 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/src/wl_platform.h b/src/wl_platform.h
-index fb319740..31321286 100644
+index 79939161..e8e1f68b 100644
 --- a/src/wl_platform.h
 +++ b/src/wl_platform.h
 @@ -425,6 +425,9 @@ typedef struct _GLFWwindowWayland
@@ -34,10 +34,10 @@ index fb319740..31321286 100644
      struct xdg_activation_token_v1* activationToken;
  
 diff --git a/src/wl_window.c b/src/wl_window.c
-index 74c68a36..e0517f0d 100644
+index d3a18117..69360ba8 100644
 --- a/src/wl_window.c
 +++ b/src/wl_window.c
-@@ -3020,14 +3020,30 @@ void _glfwGetCursorPosWayland(_GLFWwindow* window, double* xpos, double* ypos)
+@@ -2972,14 +2972,30 @@ void _glfwGetCursorPosWayland(_GLFWwindow* window, double* xpos, double* ypos)
  
  void _glfwSetCursorPosWayland(_GLFWwindow* window, double x, double y)
  {
@@ -72,7 +72,7 @@ index 74c68a36..e0517f0d 100644
  }
  
  void _glfwSetCursorModeWayland(_GLFWwindow* window, int mode)
-@@ -3261,6 +3277,17 @@ static const struct zwp_relative_pointer_v1_listener relativePointerListener =
+@@ -3213,6 +3229,17 @@ static const struct zwp_relative_pointer_v1_listener relativePointerListener =
  static void lockedPointerHandleLocked(void* userData,
                                        struct zwp_locked_pointer_v1* lockedPointer)
  {
