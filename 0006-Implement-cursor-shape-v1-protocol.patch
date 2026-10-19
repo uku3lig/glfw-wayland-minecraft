@@ -1,4 +1,4 @@
-From 18c67e397ae17a95e782f5864ecfd2f27fc54c84 Mon Sep 17 00:00:00 2001
+From f01fe9f002d829c64af50d71bd8e5909343ec6bb Mon Sep 17 00:00:00 2001
 From: keke142 <jdkeke142@gmail.com>
 Date: Fri, 17 Apr 2026 16:04:59 +0200
 Subject: [PATCH 6/8] Implement cursor-shape-v1 protocol
@@ -1494,27 +1494,27 @@ index 00000000..85529bdf
 +  </interface>
 +</protocol>
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index ac3634e8..00062f7d 100644
+index ac3634e8..d0bc3d5e 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -107,6 +107,8 @@ if (GLFW_BUILD_WAYLAND)
      generate_wayland_protocol("xdg-activation-v1.xml")
      generate_wayland_protocol("xdg-decoration-unstable-v1.xml")
      generate_wayland_protocol("xdg-toplevel-icon-v1.xml")
-+    generate_wayland_protocol("tablet-unstable-v2.xml")
++    generate_wayland_protocol("tablet-v2.xml")
 +    generate_wayland_protocol("cursor-shape-v1.xml")
  endif()
  
  if (WIN32 AND GLFW_BUILD_SHARED_LIBRARY)
 diff --git a/src/wl_init.c b/src/wl_init.c
-index 9c714dbd..b1db9a57 100644
+index 9c714dbd..ebd95a62 100644
 --- a/src/wl_init.c
 +++ b/src/wl_init.c
 @@ -51,6 +51,8 @@
  #include "idle-inhibit-unstable-v1-client-protocol.h"
  #include "pointer-warp-v1-client-protocol.h"
  #include "xdg-toplevel-icon-v1-client-protocol.h"
-+#include "tablet-unstable-v2-client-protocol.h"
++#include "tablet-v2-client-protocol.h"
 +#include "cursor-shape-v1-client-protocol.h"
  
  // NOTE: Versions of wayland-scanner prior to 1.17.91 named every global array of
@@ -1524,7 +1524,7 @@ index 9c714dbd..b1db9a57 100644
  #undef types
  
 +#define types _glfw_tablet_types
-+#include "tablet-unstable-v2-client-protocol-code.h"
++#include "tablet-v2-client-protocol-code.h"
 +#undef types
 +
 +#define types _glfw_cursor_shape_types

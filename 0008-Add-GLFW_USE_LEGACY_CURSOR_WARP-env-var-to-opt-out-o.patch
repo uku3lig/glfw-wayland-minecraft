@@ -1,4 +1,4 @@
-From 478e7325128227a6891b0f656d93e1df8ba2f5d7 Mon Sep 17 00:00:00 2001
+From 3c6dd270b624518a98363b0ee7136fa7202e0a81 Mon Sep 17 00:00:00 2001
 From: build <build@ci>
 Date: Tue, 21 Apr 2026 00:49:48 +0200
 Subject: [PATCH 8/8] Add GLFW_USE_LEGACY_CURSOR_WARP env var to opt out of
