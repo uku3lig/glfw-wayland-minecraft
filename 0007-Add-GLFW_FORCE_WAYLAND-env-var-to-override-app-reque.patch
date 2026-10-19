@@ -1,4 +1,4 @@
-From 1f5eaebb2a2d90368c7d8ea147a15a6d89ff6251 Mon Sep 17 00:00:00 2001
+From 3ab8faf787d1e1745a85bc993adb175b0b421796 Mon Sep 17 00:00:00 2001
 From: build <build@ci>
 Date: Mon, 20 Apr 2026 21:03:36 +0200
 Subject: [PATCH 7/8] Add GLFW_FORCE_WAYLAND env var to override app-requested
