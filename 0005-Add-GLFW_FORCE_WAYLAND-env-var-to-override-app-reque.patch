@@ -1,7 +1,7 @@
-From 6049105d66860b542e5f319d6a59255a5fa4ef05 Mon Sep 17 00:00:00 2001
+From f1ed64247153a9ff5500c7abefe94541feb86c05 Mon Sep 17 00:00:00 2001
 From: build <build@ci>
 Date: Mon, 20 Apr 2026 21:03:36 +0200
-Subject: [PATCH 6/7] Add GLFW_FORCE_WAYLAND env var to override app-requested
+Subject: [PATCH 5/6] Add GLFW_FORCE_WAYLAND env var to override app-requested
  X11
 
 Minecraft 26.1+ calls glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11)
@@ -16,7 +16,7 @@ when WAYLAND_DISPLAY is available. Opt-in, no effect otherwise.
  1 file changed, 9 insertions(+)
 
 diff --git a/src/platform.c b/src/platform.c
-index 95b8d0b..e5b0436 100644
+index 95b8d0b5..e5b04369 100644
 --- a/src/platform.c
 +++ b/src/platform.c
 @@ -97,6 +97,15 @@ GLFWbool _glfwSelectPlatform(int desiredID, _GLFWplatform* platform)
@@ -36,5 +36,5 @@ index 95b8d0b..e5b0436 100644
  
      if (desiredID == GLFW_ANY_PLATFORM)
 -- 
-2.47.3
+2.55.0
 
